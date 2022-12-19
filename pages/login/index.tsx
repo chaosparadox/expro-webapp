@@ -1,11 +1,29 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
 import PrimaryButton from "../../components/primary-button";
 const Login = () => {
-  function handleSubmit(event) {
-    event.preventDefaut();
-  }
+  const router = useRouter();
+  const { user, login } = useAuth();
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleLogin = async (e: any) => {
+    e.preventDefault();
+
+    console.log(user);
+    try {
+      await login(data.email, data.password);
+      router.push("/");
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <>
       <Head>
@@ -34,13 +52,34 @@ const Login = () => {
             <h2>Let’s sign you in.</h2>
           </div>
           <div>
-            <form className="flex-col h-[40vh] flex" onSubmit={handleSubmit}>
-              <input type="email" name="email" id="email" placeholder="Email" />
+            <form className="flex-col h-[40vh] flex" onSubmit={handleLogin}>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Email"
+                onChange={(e: any) =>
+                  setData({
+                    ...data,
+                    email: e.target.value,
+                  })
+                }
+                value={data.email}
+                required
+              />
               <input
                 type="password"
                 name="password"
                 id="password"
                 placeholder="Password"
+                onChange={(e: any) =>
+                  setData({
+                    ...data,
+                    password: e.target.value,
+                  })
+                }
+                value={data.password}
+                required
               />
               <h6 className="text-right text-gray-400">Forgot password?</h6>
               <div className="flex-col align-bottom justify-end mt-12">

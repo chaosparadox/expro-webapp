@@ -1,10 +1,12 @@
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
 import PrimaryButton from "../../components/primary-button";
 const SignUp = () => {
+  const router = useRouter();
   const { user, register } = useAuth();
   console.log(user);
   const [data, setData] = useState({
@@ -17,6 +19,7 @@ const SignUp = () => {
 
     try {
       await register(data.email, data.password);
+      router.push("/login");
     } catch (err) {
       console.log(err);
     }
