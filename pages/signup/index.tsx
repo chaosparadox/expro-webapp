@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
+import Loader from "../../components/loader";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -7,8 +8,9 @@ import Link from "next/link";
 import PrimaryButton from "../../components/primary-button";
 const SignUp = () => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const { user, register } = useAuth();
-  console.log(user);
+  // console.log(user);
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -16,15 +18,17 @@ const SignUp = () => {
 
   const handleSignup = async (e: any) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       await register(data.email, data.password);
       router.push("/login");
     } catch (err) {
+      setIsLoading(false);
       console.log(err);
     }
 
-    console.log(data);
+    // console.log(data);
   };
 
   return (
@@ -36,17 +40,17 @@ const SignUp = () => {
         <div className="h-screen flex-col justify-center align-middle space-y-4">
           <div className="p-4 mb-12">
             <Image
-              src="/assets/login-light.svg"
-              width={180}
+              src="/assets/signup-light.svg"
+              width={220}
               height={50}
-              alt="login-light"
+              alt="signup-light"
               className="m-auto dark:block hidden"
             ></Image>
             <Image
-              src="/assets/login-dark.svg"
-              width={180}
+              src="/assets/signup-dark.svg"
+              width={220}
               height={50}
-              alt="login-dark"
+              alt="signup-dark"
               className="m-auto dark:hidden"
             ></Image>
           </div>
@@ -87,7 +91,10 @@ const SignUp = () => {
                 value={data.password}
               />
               <div className="flex-col align-bottom justify-end mt-12">
-                <PrimaryButton textField={"Sign In"} />
+                <PrimaryButton
+                  isLoading={isLoading}
+                  textField={isLoading ? <Loader /> : "Create Account"}
+                />
                 <h6 className="text-center text-gray-400">
                   <br />
                   Already have an account?

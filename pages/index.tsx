@@ -1,16 +1,35 @@
+/* eslint-disable react/jsx-key */
 import Head from "next/head";
+import { db } from "../config/firebase";
 import Image from "next/image";
+import React, { useState, useEffect } from "react";
 import { Inter } from "@next/font/google";
 import styles from "../styles/Home.module.css";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/router";
+import { collection, getDocs } from "firebase/firestore";
 import Link from "next/link";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const { user, logout } = useAuth();
+  const [users, setUsers] = useState<any[]>([]);
+  const usersCollectionRef = collection(db, "users");
   const router = useRouter();
+
+  const getUsers = () => {
+    getDocs(usersCollectionRef).then((data: any) => {
+      setUsers(
+        data.docs.map((doc: any) => {
+          return { ...doc.data(), id: doc.id };
+        })
+      );
+    });
+  };
+  useEffect(() => {
+    getUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <Head>
@@ -21,6 +40,14 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <div>
+          {users &&
+            users.map((user) => {
+              return (
+                <div>
+                  <h1 className="text-white">{user.name}</h1>
+                </div>
+              );
+            })}
           <button
             className="bg-white p-4 flex items-center justify-center text-black"
             onClick={() => {

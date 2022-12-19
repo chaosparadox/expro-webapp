@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
+import Loader from "../../components/loader";
 import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/router";
@@ -8,6 +9,7 @@ import PrimaryButton from "../../components/primary-button";
 const Login = () => {
   const router = useRouter();
   const { user, login } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -15,12 +17,12 @@ const Login = () => {
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
-
-    console.log(user);
+    setIsLoading(true);
     try {
       await login(data.email, data.password);
       router.push("/");
     } catch (err) {
+      setIsLoading(false);
       console.log(err);
     }
   };
@@ -83,7 +85,10 @@ const Login = () => {
               />
               <h6 className="text-right text-gray-400">Forgot password?</h6>
               <div className="flex-col align-bottom justify-end mt-12">
-                <PrimaryButton textField={"Sign In"} />
+                <PrimaryButton
+                  isLoading={isLoading}
+                  textField={isLoading ? <Loader /> : "Sign In"}
+                />
                 <br />
                 <br />
                 <Link href="/signup">
