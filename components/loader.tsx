@@ -17,7 +17,6 @@ const Loader = () => {
           fill="currentFill"
         />
       </svg>
-      <p className="text-white">&nbsp;Please Wait</p>
     </div>
   );
 };
